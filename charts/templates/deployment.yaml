@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: upwind-web-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: upwind-web-app
+  template:
+    metadata:
+      labels:
+        app: upwind-web-app
+    spec:
+      containers:
+      - name: upwind
+        image: {{ .Values.registry }}:latest
+        imagePullPolicy: Always
+        command: ["sleep", "infinity"]
+        securityContext:
+          privileged: true  
+        volumeMounts:
+        - name: host-volume
+          mountPath: /host-data
+      volumes:
+      - name: host-volume
+        hostPath:
+          path: /path/to/host/data  
