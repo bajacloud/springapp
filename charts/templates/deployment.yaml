@@ -2,6 +2,10 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: upwind-web-app
+  labels: 
+    {{- if .Chart.AppVersion }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+    {{- end }}
 spec:
   replicas: 1
   selector:
@@ -11,6 +15,9 @@ spec:
     metadata:
       labels:
         app: upwind-web-app
+        {{- if .Chart.AppVersion }}
+        app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+        {{- end }}
     spec:
       containers:
       - name: upwind
