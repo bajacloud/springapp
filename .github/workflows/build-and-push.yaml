@@ -22,16 +22,17 @@ jobs:
       - name: Build Docker image
         run: docker build -t bajacloud/springapp:latest -f Dockerfile .
 
-      - name: Download twistcli from the Prisma Cloud Compute Console
-        run: |
-          curl --user ${{ secrets.PCC_USER }}:${{ secrets.PCC_PASS }} --output ./twistcli ${{ secrets.PCC_CONSOLE_URL }}/api/v1/util/twistcli
-          chmod a+x ./twistcli
-      
-      - name: Scan the image
-        run: ./twistcli images scan --address ${{ secrets.PCC_CONSOLE_URL }} --user ${{ secrets.PCC_USER }} --password ${{ secrets.PCC_PASS }} --details bajacloud/springapp:latest
+      - name: Run Trivy vulnerability scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: bajacloud/springapp:latest
+          format: 'table'
+          exit-code: '1'   # fail the pipeline if vulnerabilities are found
+          ignore-unfixed: true
 
       - name: Push Docker image
         run: docker push bajacloud/springapp:latest
+
 
 
 
